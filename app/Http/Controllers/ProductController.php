@@ -36,7 +36,6 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-//        dd($_SESSION);
         DB::beginTransaction();
         try {
 
@@ -44,14 +43,12 @@ class ProductController extends Controller
                     'title' => ['required','min:3','max:255'],
                 ]
             );
-//            dd($_SERVER);
 
             $data = $request->all();
             if (!empty($data['image'])) {
-            $image = explode(",", $data['image']);
-                $image_name = $this->uploadImage($image, $request->title);
+                $image_name = $this->uploadImage($data['image'], $request->title);
                 if ($_SERVER['HTTP_HOST'] == 'localhost') {
-                    $data['image_url'] = 'http://localhost/Api_sample/storage/app/public/products/' . $image_name;
+                    $data['image_url'] = 'http://localhost/Api_Vue/storage/app/public/products/' . $image_name;
                 }else{
                     $data['image_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/storage/app/public/products/' . $image_name;
                 }
@@ -109,10 +106,9 @@ class ProductController extends Controller
             $data = $request->all();
             if (!empty($data['image'])) {
                 $this->unlink($product->image);
-                $image = explode(",", $data['image']);
-                $image_name = $this->uploadImage($image, $request->title);
+                $image_name = $this->uploadImage($data['image'], $request->title);
                 if ($_SERVER['HTTP_HOST'] == 'localhost') {
-                    $data['image_url'] = 'http://localhost/Api_sample/storage/app/public/products/' . $image_name;
+                    $data['image_url'] = 'http://localhost/Api_Vue/storage/app/public/products/' . $image_name;
                 }else{
                     $data['image_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/storage/app/public/products/' . $image_name;
                 }
@@ -147,17 +143,19 @@ class ProductController extends Controller
         return response()->json(['status'=>'success','message'=>'Deleted Successfully !']);
     }
 
-    private function uploadImage($file, $name)
+    private function uploadImage($filee, $name)
     {
+        $file = explode(",", $filee);
         $file_type1 = str_replace("data:image/", "",$file[0]);
         $file_type = str_replace(";base64", "",$file_type1);
         $timestamp = str_replace([' ', ':'], '-', Carbon::now()->toDateTimeString());
         $file_name = $timestamp .'-'.$name. '.' . $file_type;
-        $pathToUpload = storage_path().'/app/public/products/'.$file_name;
-        file_put_contents($pathToUpload,$file[1]);
+        $pathToUpload = storage_path().'/app/public/products/';
+        $base64_str = substr($filee, strpos($filee, ",")+1);
+        $image = base64_decode($base64_str);
+        Image::make($image)->resize(634,792)->save($pathToUpload.$file_name);
         return $file_name;
     }
-
     private function unlink($file)
     {
         $pathToUpload = storage_path().'/app/public/products/';

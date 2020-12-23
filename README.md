@@ -23,11 +23,15 @@ php artisan db:seed
 ### Generate JWT secret key
 ```
 php artisan jwt:secret
-This will update your .env file with something like JWT_SECRET=foobar
 ```
 
 ### Login Credentials
 ```
 Email: salmanshuvo52@gmail.com
 Password: 12345678
+```
+### Note 
+```
+HAVE TO CHANGE URL IN PRODUCT CONTROLLER 
+IF $_SERVER["HTTP_HOST"] == 'localhost'
 ```
