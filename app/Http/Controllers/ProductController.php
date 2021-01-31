@@ -47,11 +47,7 @@ class ProductController extends Controller
             $data = $request->all();
             if (!empty($data['image'])) {
                 $image_name = $this->uploadImage($data['image'], $request->title);
-                if ($_SERVER['HTTP_HOST'] == 'localhost') {
-                    $data['image_url'] = 'http://localhost/Api_Vue/storage/app/public/products/' . $image_name;
-                }else{
-                    $data['image_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/storage/app/public/products/' . $image_name;
-                }
+                $data['image_url'] = asset('products/' . $image_name);
                 $data['image'] = $image_name;
             }
             //            $data['created_by'] = auth()->user()->id;
@@ -107,11 +103,7 @@ class ProductController extends Controller
             if (!empty($data['image'])) {
                 $this->unlink($product->image);
                 $image_name = $this->uploadImage($data['image'], $request->title);
-                if ($_SERVER['HTTP_HOST'] == 'localhost') {
-                    $data['image_url'] = 'http://localhost/Api_Vue/storage/app/public/products/' . $image_name;
-                }else{
-                    $data['image_url'] = 'http://'.$_SERVER['HTTP_HOST'].'/storage/app/public/products/' . $image_name;
-                }
+                $data['image_url'] = asset('products/' . $image_name);
                 $data['image'] = $image_name;
             }
             $product->update($data);
